@@ -17,17 +17,10 @@ app.use(helmet());
 // ── CORS ──────────────────────────────────────────────────────────────────────
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || config.allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      callback(new Error(`CORS policy blocked origin: ${origin}`));
-    },
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: true,
+    credentials: true
   })
 );
-
 // ── Body parsing ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false }));
