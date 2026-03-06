@@ -90,27 +90,32 @@ async getQuote(symbol) {
     const row = response.data.split('\n')[1];
     if (!row) throw new Error(`Symbol not found: ${symbol}`);
 
-    const parts = row.split(',');
+const parts = row.split(',');
 
-    const result = {
-      symbol,
-      name: symbol,
-      price: safeNum(parts[6]),
-      previousClose: safeNum(parts[6]),
-      open: safeNum(parts[4]),
-      dayHigh: safeNum(parts[5]),
-      dayLow: safeNum(parts[3]),
-      week52High: null,
-      week52Low: null,
-      volume: parseInt(parts[7] || 0),
-      marketCap: null,
-      currency: "USD",
-      exchange: "STOOQ",
-      changeToday: 0,
-      changePctToday: 0,
-      timestamp: Date.now()
-    };
+const open = safeNum(parts[3]);
+const high = safeNum(parts[4]);
+const low = safeNum(parts[5]);
+const close = safeNum(parts[6]);
+const volume = parseInt(parts[7] || 0);
 
+const result = {
+  symbol,
+  name: symbol,
+  price: close,
+  previousClose: close,
+  open,
+  dayHigh: high,
+  dayLow: low,
+  week52High: null,
+  week52Low: null,
+  volume,
+  marketCap: null,
+  currency: "USD",
+  exchange: "STOOQ",
+  changeToday: 0,
+  changePctToday: 0,
+  timestamp: Date.now()
+};
     quoteCache.set(symbol, result);
     return result;
 
