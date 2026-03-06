@@ -71,7 +71,6 @@ class StockService {
   // Quote via Alpha Vantage
   // ─────────────────────────────────────────────────────────
 async getQuote(symbol) {
-
   const cached = quoteCache.get(symbol);
   if (cached) {
     logger.debug(`Quote cache HIT ${symbol}`);
@@ -81,47 +80,62 @@ async getQuote(symbol) {
   logger.debug(`Quote cache MISS ${symbol}`);
 
   try {
-
     const stooqSymbol = `${symbol.toLowerCase()}.us`;
     const url = `https://stooq.com/q/l/?s=${stooqSymbol}&f=sd2t2ohlcv&h&e=csv`;
 
-    const response = await axios.get(url);
+    const response = await axios.get(url, { timeout: 8000 });
 
-    const row = response.data.split('\n')[1];
-    if (!row) throw new Error(`Symbol not found: ${symbol}`);
+    const lines = response.data.trim().split('\n');
+    if (lines.length < 2) {
+      const err = new Error(`No quote data for ${symbol}`);
+      err.status = 404;
+      throw err;
+    }
 
-const parts = row.split(',');
+    const row = lines[1].trim();
+    const parts = row.split(',');
 
-const open = safeNum(parts[3]);
-const high = safeNum(parts[4]);
-const low = safeNum(parts[5]);
-const close = safeNum(parts[6]);
-const volume = parseInt(parts[7] || 0);
+    // Stooq returns "N/D" when data not available
+    const open = safeNum(parts[3]);
+    const high = safeNum(parts[4]);
+    const low = safeNum(parts[5]);
+    const close = safeNum(parts[6]);
+    const volume = parseInt(parts[7] || 0);
 
-const result = {
-  symbol,
-  name: symbol,
-  price: close,
-  previousClose: close,
-  open,
-  dayHigh: high,
-  dayLow: low,
-  week52High: null,
-  week52Low: null,
-  volume,
-  marketCap: null,
-  currency: "USD",
-  exchange: "STOOQ",
-  changeToday: 0,
-  changePctToday: 0,
-  timestamp: Date.now()
-};
+    if (!close) {
+      const err = new Error(`Invalid quote for ${symbol}`);
+      err.status = 404;
+      throw err;
+    }
+
+    const result = {
+      symbol,
+      name: symbol,
+      price: close,
+      previousClose: close,
+      open,
+      dayHigh: high,
+      dayLow: low,
+      week52High: null,
+      week52Low: null,
+      volume,
+      marketCap: null,
+      currency: "USD",
+      exchange: "STOOQ",
+      changeToday: 0,
+      changePctToday: 0,
+      timestamp: Date.now()
+    };
+
     quoteCache.set(symbol, result);
     return result;
 
   } catch (err) {
     logger.error(`Quote fetch failed for ${symbol}`, err.message);
-    throw err;
+
+    const e = new Error("Symbol not found or data unavailable.");
+    e.status = 404;
+    throw e;
   }
 }
   // ─────────────────────────────────────────────────────────
@@ -137,8 +151,7 @@ const result = {
         params: {
           function: "OVERVIEW",
           symbol,
-          apikey: process.env.ALPHAVANTAGE_API_KEY
-        }
+          apikey: process.env.ALPHA_VANTAGE_API_KEY        }
       });
 
       const d = response.data;
