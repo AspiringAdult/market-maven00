@@ -8,9 +8,10 @@ const config = {
 
   newsApiKey: process.env.NEWS_API_KEY || '',
 
-  allowedOrigins: (
-    process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000'
-  ).split(',').map((o) => o.trim()),
+allowedOrigins: (
+  process.env.ALLOWED_ORIGINS ||
+  'http://localhost:5173,http://localhost:3000,https://market-maven00.vercel.app'
+).split(',').map((o) => o.trim()),
 
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000,
