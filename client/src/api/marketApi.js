@@ -23,7 +23,10 @@ const TWELVE_KEY  = (typeof import.meta !== 'undefined' && import.meta.env?.VITE
 const TWELVE_BASE = 'https://api.twelvedata.com';
 
 // ── Axios instances ───────────────────────────────────────────────────────────
-const backendHttp = axios.create({ baseURL: '/api', timeout: 25_000 });
+const backendHttp = axios.create({
+  baseURL: 'https://market-maven-api.onrender.com/api',
+  timeout: 25000
+});
 backendHttp.interceptors.response.use(
   (r) => r.data,
   (e) => Promise.reject(new Error(e.response?.data?.error || e.message || 'API error')),
