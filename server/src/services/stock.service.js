@@ -471,13 +471,13 @@ class StockService {
     logger.debug(`Fundamentals cache MISS ${upper}`);
 
     // ① Alpha Vantage (primary — has AV key in env)
-    if (process.env.ALPHA_VANTAGE_API_KEY) {
+    if (process.env.ALPHA_VANTAGE_API_KEY ?? process.env.ALPHAVANTAGE_API_KEY) {
       try {
         const response = await http.get(ALPHA_URL, {
           params: {
             function: 'OVERVIEW',
             symbol: upper,
-            apikey: process.env.ALPHA_VANTAGE_API_KEY,
+            apikey: process.env.ALPHA_VANTAGE_API_KEY ?? process.env.ALPHAVANTAGE_API_KEY,
           },
         });
         const d = response.data;

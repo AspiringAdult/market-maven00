@@ -29,15 +29,12 @@ class IndicatorService {
     const low    = ohlcv.map((d) => d.low);
     const volume = ohlcv.map((d) => d.volume);
 
-    // ── Moving averages ───────────────────────────────────────────────────────
     const sma20Raw = ti.SMA.calculate({ values: close, period: 20 });
     const sma50Raw = ti.SMA.calculate({ values: close, period: 50 });
     const ema20Raw = ti.EMA.calculate({ values: close, period: 20 });
 
-    // ── RSI (14) ──────────────────────────────────────────────────────────────
     const rsiRaw = ti.RSI.calculate({ values: close, period: 14 });
 
-    // ── MACD (12, 26, 9) ──────────────────────────────────────────────────────
     const macdRaw = ti.MACD.calculate({
       values:               close,
       fastPeriod:           12,
@@ -47,20 +44,16 @@ class IndicatorService {
       SimpleMASignal:       false,
     });
 
-    // ── Bollinger Bands (20, 2σ) ──────────────────────────────────────────────
     const bbRaw = ti.BollingerBands.calculate({
       values:  close,
       period:  20,
       stdDev:  2,
     });
 
-    // ── VWAP ──────────────────────────────────────────────────────────────────
     const vwapRaw = ti.VWAP.calculate({ close, high, low, volume });
 
-    // ── Historical volatility (rolling 21-day, annualised) ────────────────────
     const hvSeries = this._rollingHV(close, 21);
 
-    // ── Align all arrays to ohlcv length ──────────────────────────────────────
     const sma20      = alignToOHLCV(ohlcv, sma20Raw);
     const sma50      = alignToOHLCV(ohlcv, sma50Raw);
     const ema20      = alignToOHLCV(ohlcv, ema20Raw);
@@ -73,7 +66,6 @@ class IndicatorService {
     const bbMiddle   = alignToOHLCV(ohlcv, bbRaw.map((b) => safeNum(b.middle, 4)));
     const bbLower    = alignToOHLCV(ohlcv, bbRaw.map((b) => safeNum(b.lower,  4)));
 
-    // ── Latest scalar values (for metric cards) ───────────────────────────────
     const last = (arr) => arr[arr.length - 1] ?? null;
 
     const latest = {
@@ -110,12 +102,7 @@ class IndicatorService {
     };
   }
 
-  // ─── Private helpers ────────────────────────────────────────────────────────
-
-  /**
-   * Rolling HV: for each window of `period` log-returns, compute annualised std-dev × √252.
-   * Output length === closes.length (first period-1 elements are null).
-   */
+ 
   _rollingHV(closes, period = 21) {
     const logReturns = closes.slice(1).map((c, i) => Math.log(c / closes[i]));
     // pad so output aligns with closes
@@ -130,9 +117,7 @@ class IndicatorService {
     return result;
   }
 
-  /**
-   * Single annualised HV scalar over the full lookback period (for metric card).
-   */
+  
   _annualisedHV(closes, period = 252) {
     const slice      = closes.slice(-Math.min(period, closes.length));
     const logReturns = slice.slice(1).map((c, i) => Math.log(c / slice[i]));
