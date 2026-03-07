@@ -8,9 +8,7 @@ function load() {
   catch { return []; }
 }
 
-/**
- * Each position: { id, symbol, qty, buyPrice, addedAt }
- */
+
 export function usePortfolio() {
   const [positions, setPositions] = useState(load);
   const [quotes,    setQuotes]    = useState({});

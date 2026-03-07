@@ -1,9 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-/**
- * useAutoRefresh — calls `callback` every `ms` when enabled.
- * Returns [enabled, toggle, secondsUntilNext]
- */
 export function useAutoRefresh(callback, ms = 30_000) {
   const [enabled,  setEnabled]  = useState(false);
   const [countdown, setCountdown] = useState(ms / 1000);

@@ -3,10 +3,7 @@
 const indexService = require('../services/index.service');
 const { asyncHandler } = require('../middleware/errorHandler');
 
-/**
- * GET /api/indices
- * Return all indices
- */
+
 const getIndices = asyncHandler(async (req, res) => {
 
   const names = ['NIFTY50', 'FINNIFTY', 'NIFTYBANK', 'NASDAQ'];
@@ -27,9 +24,7 @@ const getIndices = asyncHandler(async (req, res) => {
   res.json(data);
 });
 
-/**
- * GET /api/indices/:name
- */
+
 const getIndex = asyncHandler(async (req, res) => {
 
   const { name } = req.params;

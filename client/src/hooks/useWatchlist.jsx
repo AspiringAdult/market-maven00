@@ -32,7 +32,7 @@ export function useWatchlist() {
     localStorage.setItem(LS_KEY, JSON.stringify(symbols));
   }, [symbols]);
 
-  // ── add ───────────────────────────────────────────────────────────────────
+  // ── add 
   const add = useCallback((sym) => {
     const upper = sym.trim().toUpperCase();
     if (!upper) return;
@@ -42,7 +42,6 @@ export function useWatchlist() {
     });
   }, []);
 
-  // ── remove ────────────────────────────────────────────────────────────────
   const remove = useCallback((sym) => {
     setSymbols((prev) => prev.filter((s) => s !== sym));
     setQuotes((prev) => {
@@ -70,12 +69,10 @@ export function useWatchlist() {
     }
   }, [symbols]);
 
-  // ── Auto-refresh on mount + when list size changes ────────────────────────
   useEffect(() => {
     refresh();
   }, [symbols.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Sorted view (derived, not stored) ────────────────────────────────────
   const sorted = [...symbols].sort((a, b) => {
     const qa = quotes[a];
     const qb = quotes[b];

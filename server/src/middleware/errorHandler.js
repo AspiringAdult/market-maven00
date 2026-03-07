@@ -2,10 +2,7 @@
 
 const logger = require('../utils/logger');
 
-/**
- * Centralised Express error handler.
- * Must be the LAST middleware registered in app.js.
- */
+
 const errorHandler = (err, req, res, next) => { // eslint-disable-line no-unused-vars
   logger.error(`${req.method} ${req.originalUrl} → ${err.message}`, {
     status: err.status,
@@ -54,13 +51,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-line no-unused
   });
 };
 
-/**
- * Wraps an async route handler and forwards any thrown errors to errorHandler.
- * Eliminates the need for try/catch in every controller.
- *
- * Usage:
- *   const doSomething = asyncHandler(async (req, res) => { ... });
- */
+
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 

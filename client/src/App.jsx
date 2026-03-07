@@ -5,10 +5,7 @@ import Compare         from './pages/Compare';
 import Watchlist       from './pages/Watchlist';
 import Portfolio       from './pages/Portfolio';
 
-/**
- * DashboardLoader — intercepts navigation state from Watchlist page
- * so clicking a watchlist row loads that symbol in the terminal.
- */
+
 function DashboardLoader() {
   const location = useLocation();
   const navigate  = useNavigate();

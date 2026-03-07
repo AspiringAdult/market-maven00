@@ -19,8 +19,7 @@ export function useLivePrices(symbols = []) {
 
     setPrices(fakePrices);
 
-  }, [symbols.join(",")]);   // ← critical fix
-
+  }, [symbols.join(",")]);  
   return { prices };
 
 }

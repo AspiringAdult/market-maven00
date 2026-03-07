@@ -1,5 +1,17 @@
 'use strict';
-const searchRoutes = require('./routes/search');
+
+/**
+ * app.js
+ *
+ * FIX: Removed `const searchRoutes = require('./routes/search')` from the
+ * top of the file.  That line was a leftover from an earlier refactor.
+ * The search router is already correctly mounted inside routes/index.js:
+ *   router.use('/search', require('./search'));
+ * Having a second unconsumed require here causes a startup crash if the
+ * file path ever changes, and generates a confusing "searchRoutes is
+ * defined but never used" ESLint error.
+ */
+
 const express   = require('express');
 const helmet    = require('helmet');
 const cors      = require('cors');
@@ -15,13 +27,15 @@ const app = express();
 app.use(helmet());
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+// Using config.allowedOrigins instead of '*' so you can restrict in production
+// via the ALLOWED_ORIGINS environment variable.
 app.use(cors({
-  origin: '*',
-  methods: ['GET','POST','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization']
+  origin: config.allowedOrigins || '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-
 app.options('*', cors());
+
 // ── Body parsing ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false }));
